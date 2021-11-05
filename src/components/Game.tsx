@@ -76,6 +76,11 @@ const createGame = (numberOfPlayers: number) => {
         // Reset the state of the dice, then end the player's turn
         G.dice = Array(totalDice).fill(1);
         G.diceHeld = Array(totalDice).fill(false);
+        // Add sticks to player after turn
+        var numSticks = G.players[ctx.currentPlayer].sticks;
+        numSticks = numSticks + (3 - G.totalRolls);
+        G.players[ctx.currentPlayer].sticks = numSticks;
+        // Reset rolls to 0
         G.totalRolls = 0;
         ctx.events.endTurn();
       },
