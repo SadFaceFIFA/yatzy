@@ -38,6 +38,7 @@ const createGame = (numberOfPlayers: number) => {
         players.push({
           id: p.toString(),
           name: "Player " + (p+1),
+          sticks: 0,
           scoring: createInitialScores()
         });
       }

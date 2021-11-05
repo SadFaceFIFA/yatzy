@@ -32,6 +32,7 @@ const Board: React.FC<BoardProps> = ({ ctx, G, moves }) => {
     <>
       <p>{G.players[ctx.currentPlayer].name}'s turn</p>
       <p>{3 - G.totalRolls} rolls remaining</p>
+      <p>{G.players[ctx.currentPlayer].sticks} total sticks</p>
     </>
   ) : null;
 
