@@ -56,14 +56,22 @@ const createGame = (numberOfPlayers: number) => {
     },
     moves: {
       rollDice: (G: GameState, ctx: GameContext) => {
+        // Initialize availableRolls to 3 + numberOfSticks
+        if (G.totalRolls == 0) {
+          G.availableRolls = 3 + G.players[ctx.currentPlayer].sticks;
+        }
         // Don't allow the dice to be rolled more than 3 times.
-        if (G.totalRolls >= 3) return;
+        if (G.totalRolls >= G.availableRolls) return;
 
         // Roll a D6 for each dice that isn't being held.
         for (let d = 0; d < G.dice.length; d++) {
           if (!G.diceHeld[d]) G.dice[d] = ctx.random.D6();
         }
         G.totalRolls++;
+        if (G.totalRolls > 3) {
+          G.players[ctx.currentPlayer].sticks--;
+          G.totalRolls = 3;
+        }
       },
       selectScore: (G: GameState, ctx: GameContext, category: ScoringCategory) => {
         // Don't allow the category to be selected if it's already been scored.
@@ -82,11 +90,12 @@ const createGame = (numberOfPlayers: number) => {
         G.players[ctx.currentPlayer].sticks = numSticks;
         // Reset rolls to 0
         G.totalRolls = 0;
+        G.availableRolls = 0;
         ctx.events.endTurn();
       },
       toggleDie: (G: GameState, ctx: GameContext, dieIndex: number) => {
         // Don't allow the holding or unholding of die if the player hasn't rolled yet or has finished rolling
-        if (G.totalRolls === 0 || G.totalRolls >= 3) return;
+        if (G.totalRolls === 0 || G.totalRolls >= G.availableRolls) return;
 
         // Flip from held to not held, or not held to held
         G.diceHeld[dieIndex] = !G.diceHeld[dieIndex];

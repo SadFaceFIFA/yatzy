@@ -14,8 +14,10 @@ interface BoardProps {
 
 const Board: React.FC<BoardProps> = ({ ctx, G, moves }) => {
   let diceRows = [];
-  const canRoll = G.totalRolls < 3 && !ctx.gameover;
-  const canHold = G.totalRolls > 0 && G.totalRolls < 3 && !ctx.gameover;
+  // Allowing player to roll if they have sticks
+  const availableRolls = G.players[ctx.currentPlayer].sticks + 3;
+  const canRoll = G.totalRolls < availableRolls && !ctx.gameover;
+  const canHold = G.totalRolls > 0 && G.totalRolls < availableRolls && !ctx.gameover;
 
   for (let d = 0; d < G.dice.length; d++) {
     diceRows.push(
@@ -27,11 +29,14 @@ const Board: React.FC<BoardProps> = ({ ctx, G, moves }) => {
       </Row>
     );
   }
-
+  var rollsRemaining = 3 - G.totalRolls;
+  if (rollsRemaining <= 0) {
+    rollsRemaining = 0;
+  }
   let turnDetails = !ctx.gameover ? (
     <>
       <p>{G.players[ctx.currentPlayer].name}'s turn</p>
-      <p>{3 - G.totalRolls} rolls remaining</p>
+      <p>{rollsRemaining} rolls remaining</p>
       <p>{G.players[ctx.currentPlayer].sticks} total sticks</p>
     </>
   ) : null;
